@@ -23,12 +23,22 @@ def entry(request, title):
 def search(request):
     if request.method == "GET":
         search_term = request.GET.get("q")
-        print(search_term)
         entry = util.get_entry(search_term) 
         if entry is None: 
-            return render(request, "encyclopedia/error.html")
+            entries = util.list_entries()
+            matching_titles = [title for title in entries if search_term.lower() in title.lower()]
+            print(matching_titles)
+            if not matching_titles:
+                return render(request, "encyclopedia/error.html")
+            else: 
+                return render(request, "encyclopedia/results.html", {
+                    "results": matching_titles
+                })
         else: 
             return render(request, "encyclopedia/entry.html", {
             "title": search_term,
             "entry": util.get_entry(search_term)
         })
+
+def results(request):
+    return render(request, "encyclopedia/results.html")
