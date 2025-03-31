@@ -1,9 +1,15 @@
 from django.shortcuts import render
+from django import forms
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from . import util
 
-
+class newSearchForm(forms.Form):
+    search = forms.CharField(label="Search")
 def index(request):
+    if request.method == "POST":
+        request.session["search"] = []
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
