@@ -47,6 +47,21 @@ def results(request):
     return render(request, "encyclopedia/results.html")
 
 def newpage(request):
+    if request.method == "POST":
+        form = NewPageForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            entry = form.cleaned_data["entry"]
+            if util.get_entry(title) is None:
+                util.save_entry(title, entry)
+                return render(request, "encyclopedia/entry.html", {
+                "title": title,
+                "entry": util.get_entry(title)
+            })
+            else:
+                return render(request, "encyclopedia/newpage.html", {
+        "form": NewPageForm()
+    })
     return render(request, "encyclopedia/newpage.html", {
         "form": NewPageForm()
     })
