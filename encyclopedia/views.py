@@ -60,8 +60,9 @@ def newpage(request):
             })
             else:
                 return render(request, "encyclopedia/newpage.html", {
-        "form": NewPageForm()
-    })
+                    "form": form,
+                    "error": True
+                })
     return render(request, "encyclopedia/newpage.html", {
         "form": NewPageForm()
     })
