@@ -4,6 +4,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from . import util
 
+class NewPageForm(forms.Form):
+    title = forms.CharField(label="Title")
+    entry = forms.CharField(widget=forms.Textarea(attrs={'rows': 4}))
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -42,3 +45,8 @@ def search(request):
 
 def results(request):
     return render(request, "encyclopedia/results.html")
+
+def newpage(request):
+    return render(request, "encyclopedia/newpage.html", {
+        "form": NewPageForm()
+    })
