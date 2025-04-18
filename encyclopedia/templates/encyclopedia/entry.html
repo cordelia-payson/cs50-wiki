@@ -5,8 +5,11 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ title }}</h1>
 
+    <div style="display: flex; flex-direction: column;">
+        <h1>{{ title }}</h1>
+        <a href="{% url 'edit' %}?title={{title}}">Edit Entry</a>
+    </div>
     {{ entry }}
 
 {% endblock %}

@@ -6,11 +6,34 @@ from . import util
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="Title")
-    entry = forms.CharField(widget=forms.Textarea(attrs={'rows': 4}))
+    entry = forms.CharField(widget=forms.Textarea)
+
+class EditForm(forms.Form):
+    title = forms.CharField(widget=forms.HiddenInput())
+    entry = forms.CharField(widget=forms.Textarea)
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
+    })
+
+def edit(request):
+    if request.method == "GET":
+        title = request.GET.get("title")
+        return render(request, "encyclopedia/edit.html", {
+            "entry": entry,
+            "form": EditForm(initial={'title': title, 'entry': util.get_entry(title)})
+        })
+    if request.method == "POST":
+        form = EditForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            updated_entry = form.cleaned_data["entry"]
+            print(title)
+            util.save_entry(title, updated_entry)
+            return HttpResponseRedirect(title)
+    return render(request, "encyclopedia/edit.html", {
+        "form": EditForm()
     })
 
 def entry(request, title):
@@ -54,10 +77,7 @@ def newpage(request):
             entry = form.cleaned_data["entry"]
             if util.get_entry(title) is None:
                 util.save_entry(title, entry)
-                return render(request, "encyclopedia/entry.html", {
-                "title": title,
-                "entry": util.get_entry(title)
-            })
+                return HttpResponseRedirect(title)
             else:
                 return render(request, "encyclopedia/newpage.html", {
                     "form": form,
@@ -65,4 +85,17 @@ def newpage(request):
                 })
     return render(request, "encyclopedia/newpage.html", {
         "form": NewPageForm()
+    })
+
+def update(request):
+    if request.method == "POST":
+        form = EditForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            updated_entry = form.cleaned_data["entry"]
+            print(title)
+            util.save_entry(title, updated_entry)
+            return HttpResponseRedirect(title)
+    return render(request, "encyclopedia/edit.html", {
+        "form": EditForm()
     })
