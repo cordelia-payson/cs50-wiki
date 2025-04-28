@@ -3,6 +3,7 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from . import util
+from random import choice
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -87,15 +88,7 @@ def newpage(request):
         "form": NewPageForm()
     })
 
-def update(request):
-    if request.method == "POST":
-        form = EditForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data["title"]
-            updated_entry = form.cleaned_data["entry"]
-            print(title)
-            util.save_entry(title, updated_entry)
-            return HttpResponseRedirect(title)
-    return render(request, "encyclopedia/edit.html", {
-        "form": EditForm()
-    })
+def random(request):
+    entries = util.list_entries()
+    page_title = choice(entries)
+    return HttpResponseRedirect(page_title)
