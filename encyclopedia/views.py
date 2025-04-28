@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from . import util
 from random import choice
+import markdown2
 
 class NewPageForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -38,13 +39,14 @@ def edit(request):
     })
 
 def entry(request, title):
-    entry = util.get_entry(title) 
+    entry = markdown2.markdown(util.get_entry(title))
+    print(markdown2.markdown(util.get_entry(title)))
     if entry is None: 
         return render(request, "encyclopedia/error.html")
     else: 
         return render(request, "encyclopedia/entry.html", {
         "title": title,
-        "entry": util.get_entry(title)
+        "entry": entry
     })
 
 def search(request):
